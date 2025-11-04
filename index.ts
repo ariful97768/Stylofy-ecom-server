@@ -2,12 +2,20 @@ import type { Request, Response } from "express";
 require("dotenv").config();
 const mongoose = require("mongoose");
 const express = require("express");
+const cors = require("cors");
+const jwt = require("jsonwebtoken");
+const jwtSecret = process.env.JWT;
+const app = express();
 
-// const cors
 const { User, Product, Order, Cart } = require("./src/models/models");
 
-const app = express();
 app.use(express.json());
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://stylofy-ecom.vercel.app"],
+    credentials: true,
+  })
+);
 
 const PORT = process.env.PORT || 5000;
 
