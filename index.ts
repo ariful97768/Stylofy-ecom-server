@@ -61,6 +61,17 @@ async function run() {
       })
       .json({ message: "Signed out successfully" });
   });
+  
+  app.post("/add-product", async (req: Request, res: Response) => {
+    try {
+      const newProduct = new Product(req.body);
+      const savedProduct = await newProduct.save();
+      res.status(201).json(savedProduct);
+    } catch (error) {
+      res.status(500).json({ error, message: "Server Error" });
+    }
+  });
+
 
 
 
