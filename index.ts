@@ -30,6 +30,40 @@ async function run() {
     res.send("E-Commerce Backend is running");
   });
 
+  app.post("/sign-token", (req: Request, res: Response) => {
+    const email = req.body.email;
+    const token = jwt.sign(
+      {
+        email,
+        role: "user",
+      },
+      jwtSecret,
+      {
+        algorithm: "HS256",
+        expiresIn: "30d",
+      }
+    );
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: true,
+      })
+      .json({ token });
+  });
+
+  app.get("/signout", (req: Request, res: Response) => {
+    res
+      .clearCookie("token", {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: true,
+      })
+      .json({ message: "Signed out successfully" });
+  });
+
+
+
   app.get("/products", async (req: Request, res: Response) => {
     try {
       const products = await Product.find().populate(
