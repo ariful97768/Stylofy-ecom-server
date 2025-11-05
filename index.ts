@@ -10,6 +10,7 @@ const app = express();
 
 const { User, Product, Order, Cart } = require("./src/models/models");
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(
   cors({
@@ -210,6 +211,40 @@ async function run() {
       }
     }
   );
+
+  app.get(
+    "/get-orders/:email",
+    verifyToken,
+    async (req: Request, res: Response) => {
+      try {
+        const orders = await Order.find()
+          .where("user")
+          .equals(req.params.email)
+          .populate("product");
+        res.json(orders);
+      } catch (error) {
+        res.status(500).json({ message: "Server Error" });
+      }
+    }
+  );
+
+  app.delete(
+    "/delete-order/:id",
+    verifyToken,
+    async (req: Request, res: Response) => {
+      const id = req.params.id;
+      try {
+        const ress = await Order.findByIdAndDelete(id);
+        if (!ress) {
+          return res.status(404).json({ message: "Order not found" });
+        }
+        res.json({ message: "Order deleted successfully" });
+      } catch (error) {
+        res.status(500).json({ message: "Server Error" });
+      }
+    }
+  );
+
 
   app.get("/products", async (req: Request, res: Response) => {
     try {
