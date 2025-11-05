@@ -187,6 +187,29 @@ async function run() {
     }
   );
 
+  app.post("/add-to-cart", verifyToken, async (req: Request, res: Response) => {
+    try {
+      const newCartItem = new Cart(req.body);
+      const savedCartItem = await newCartItem.save();
+      res.status(201).json(savedCartItem);
+    } catch (error) {
+      res.status(500).json({ error, message: "Server Error" });
+    }
+  });
+
+  app.post(
+    "/confirm-order",
+    verifyToken,
+    async (req: Request, res: Response) => {
+      try {
+        const newOrder = new Order(req.body);
+        const savedOrder = await newOrder.save();
+        res.status(201).json(savedOrder);
+      } catch (error) {
+        res.status(500).json({ error, message: "Server Error" });
+      }
+    }
+  );
 
   app.get("/products", async (req: Request, res: Response) => {
     try {
