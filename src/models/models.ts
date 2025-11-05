@@ -14,27 +14,28 @@ const userSchema = new mongoose.Schema(
 
 const productSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true },
+    name: { type: String, required: true },
     description: { type: String, required: true },
     category: { type: String, required: true },
     price: { type: Number, required: true },
-    image: { type: String },
+    images: { type: [String], required: true },
     video: { type: String },
     discount: { type: Number, default: 0 },
     discountTill: { type: Date },
-    stock: { type: Number, required: true },
-    seller: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
+    quantity: { type: Number, required: true },
+    size: { type: String, required: true },
+    // seller: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "User",
+    //   required: true,
+    // },
   },
   { timestamps: true }
 );
 
 const orderSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    user: { type: String, required: true },
     product: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product",
@@ -43,6 +44,16 @@ const orderSchema = new mongoose.Schema(
     discount: { type: Number, default: 0 },
     quantity: { type: Number, required: true },
     price: { type: Number, required: true },
+    shipping: { type: Number, required: true },
+    userInfo: {
+      name: { type: String, required: true },
+      email: { type: String, required: true },
+    },
+    order: {
+      country: { type: String, required: true },
+      city: { type: String, required: true },
+      address: { type: String, required: true },
+    },
     status: {
       type: String,
       enum: ["pending", "shipped", "delivered"],
@@ -54,7 +65,7 @@ const orderSchema = new mongoose.Schema(
 
 const cartSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    userId: { type: String, required: true },
     product: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product",
