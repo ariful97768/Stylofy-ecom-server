@@ -141,7 +141,18 @@ async function run() {
     }
   );
 
+  app.get(
+    "/get-homepage-products",
 
+    async (req: Request, res: Response) => {
+      try {
+        const products = await Product.find().limit(8);
+        res.json(products);
+      } catch (error) {
+        res.status(500).json({ message: "Server Error" });
+      }
+    }
+  );
 
 
   app.get("/products", async (req: Request, res: Response) => {
