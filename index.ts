@@ -112,8 +112,9 @@ async function run() {
     res
       .cookie("token", token, {
         httpOnly: true,
-        sameSite: "lax",
         secure: true,
+        sameSite: "none",
+        path: "/",
       })
       .json({ token });
   });
@@ -245,6 +246,43 @@ async function run() {
     }
   );
 
+  // app.get(
+  //   "/get-cart-item/:id",
+  //   verifyToken,
+  //   async (req: Request, res: Response) => {
+  //     const id = req.params.id;
+
+  //     try {
+  //       const product = await Product.findById(id);
+  //       res.json(product);
+  //     } catch (error) {
+  //       res.status(500).json({ message: "Server Error" });
+  //     }
+  //   }
+  // );
+
+  // app.get("/sign-token", (req: Request, res: Response) => {
+  //   const token = req.cookies.token;
+  //   if (!token) {
+  //     return res.status(401).json({ message: "No token provided" });
+  //   }
+  //   try {
+  //     const decoded = jwt.verify(token, jwtSecret);
+  //     res.json({ decoded });
+  //   } catch (error) {
+  //     res.status(401).json({ message: "Invalid token" });
+  //   }
+  // });
+
+  app.post("/users", async (req: Request, res: Response) => {
+    try {
+      const newUser = new User(req.body);
+      const savedUser = await newUser.save();
+      res.status(201).json(savedUser);
+    } catch (error) {
+      res.status(500).json({ message: "Server Error" });
+    }
+  });
 
   app.get("/products", async (req: Request, res: Response) => {
     try {
