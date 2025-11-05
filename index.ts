@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 const jwtSecret = process.env.JWT;
 const app = express();
 
@@ -24,6 +25,70 @@ const uri = process.env.DB_URI;
 mongoose.connect(uri).then(() => {
   console.log("MongoDB connected successfully");
 });
+
+async function verifyToken(req: Request, res: Response, next: Function) {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+
+  // as i don't have users collection, so just checking if token is valid
+  next();
+  // try {
+  //   const decoded = jwt.verify(token, jwtSecret);
+  //   const user = await User.findOne({ email: decoded.email });
+
+  //   if (
+  //     user.role === "admin" ||
+  //     user.role === "seller" ||
+  //     user.role === "user"
+  //   ) {
+  //     next();
+  //   } else {
+  //     res.status(403).json({ message: "Forbidden" });
+  //   }
+  // } catch (error) {
+  //   res.status(401).json({ message: "Invalid token" });
+  // }
+}
+
+async function verifyAdmin(req: Request, res: Response, next: Function) {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+  try {
+    const decoded = jwt.verify(token, jwtSecret);
+    const user = await User.findOne({ email: decoded.email });
+
+    if (user.role === "admin") {
+      next();
+    } else {
+      res.status(403).json({ message: "Forbidden" });
+    }
+  } catch (error) {
+    res.status(401).json({ message: "Invalid token" });
+  }
+}
+
+async function verifySeller(req: Request, res: Response, next: Function) {
+  console.log(req.cookies);
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+  try {
+    const decoded = jwt.verify(token, jwtSecret);
+    console.log(decoded);
+    if (decoded.role === "seller") {
+      next();
+    } else {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid token" });
+  }
+}
 
 async function run() {
   app.get("/", (req: Request, res: Response) => {
