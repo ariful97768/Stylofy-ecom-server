@@ -115,6 +115,7 @@ async function run() {
         secure: true,
         sameSite: "none",
         path: "/",
+        maxAge: 30 * 24 * 60 * 60 * 1000,
       })
       .json({ token });
   });
