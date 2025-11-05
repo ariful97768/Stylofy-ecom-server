@@ -154,6 +154,39 @@ async function run() {
     }
   );
 
+  app.get(
+    "/get-all-products",
+    verifyToken,
+    async (req: Request, res: Response) => {
+      const paginationStart = parseInt(req.query.start as string) || 0;
+      const paginationLimit = parseInt(req.query.limit as string) || 18;
+
+      try {
+        const products = await Product.find()
+          .skip(paginationStart)
+          .limit(paginationLimit);
+        res.json(products);
+      } catch (error) {
+        res.status(500).json({ message: "Server Error" });
+      }
+    }
+  );
+
+  app.get(
+    "/get-product/:id",
+    verifyToken,
+    async (req: Request, res: Response) => {
+      const id = req.params.id;
+
+      try {
+        const product = await Product.findById(id);
+        res.json(product);
+      } catch (error) {
+        res.status(500).json({ message: "Server Error" });
+      }
+    }
+  );
+
 
   app.get("/products", async (req: Request, res: Response) => {
     try {
