@@ -111,11 +111,11 @@ async function run() {
       .cookie("token", token, {
         httpOnly: true,
         secure: true,
-        sameSite: "none",
+        sameSite: "lax",
         path: "/",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       })
-      .json({ token });
+      .json({ message: "signed token successfully" });
   });
 
   app.get("/signout", (req: Request, res: Response) => {
