@@ -253,6 +253,49 @@ async function run() {
     }
   );
 
+  app.get("/get-users", verifyAdmin, async (req: Request, res: Response) => {
+    try {
+      const start = parseInt(req.query.start as string) || 0;
+      const limit = parseInt(req.query.limit as string) || 10;
+
+      const users = await User.aggregate([
+        {
+          $lookup: {
+            from: "orders",
+            localField: "email",
+            foreignField: "user",
+            as: "orders",
+          },
+        },
+        {
+          $lookup: {
+            from: "products",
+            localField: "email",
+            foreignField: "seller",
+            as: "products",
+          },
+        },
+        {
+          $project: {
+            name: 1,
+            email: 1,
+            role: 1,
+            createdAt: 1,
+            updatedAt: 1,
+            orderCount: { $size: "$orders" },
+            productCount: { $size: "$products" },
+          },
+        },
+        { $skip: start },
+        { $limit: limit },
+      ]);
+
+      res.json(users);
+    } catch (error) {
+      res.status(500).json({ error, message: "Server Error" });
+    }
+  });
+
   // app.get(
   //   "/get-cart-item/:id",
   //   verifyToken,
