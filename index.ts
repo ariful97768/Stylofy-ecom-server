@@ -128,6 +128,26 @@ async function run() {
       .json({ message: "Signed out successfully" });
   });
 
+  app.post("/sign-user", async (req: Request, res: Response) => {
+    try {
+      const data = req.body;
+      const email = data.email;
+      if (!email) return res.status(400).json({ message: "Email is required" });
+
+      const existingUser = await User.findOne({ email: email.toLowerCase() });
+
+      if (existingUser) {
+        return res.status(200).json(existingUser);
+      }
+
+      const newUser = new User(data);
+      const savedUser = await newUser.save();
+      res.status(201).json(savedUser);
+    } catch (error) {
+      res.status(500).json({ error, message: "Server Error" });
+    }
+  });
+
   app.post(
     "/add-product",
     verifySeller,
