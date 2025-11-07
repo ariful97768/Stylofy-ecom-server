@@ -4,10 +4,10 @@ const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    image: { type: String },
+    image: { type: String, default: null },
     provider: { type: String, required: true },
     password: { type: String },
-    role: { type: String, enum: ["admin", "seller"], default: "user" },
+    role: { type: String, enum: ["admin", "seller", "user"], default: "user" },
   },
   { timestamps: true }
 );
@@ -24,11 +24,7 @@ const productSchema = new mongoose.Schema(
     discountTill: { type: Date },
     quantity: { type: Number, required: true },
     size: { type: String, required: true },
-    // seller: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "User",
-    //   required: true,
-    // },
+    seller: { type: String, required: true },
   },
   { timestamps: true }
 );
@@ -41,6 +37,7 @@ const orderSchema = new mongoose.Schema(
       ref: "Product",
       required: true,
     },
+    payment: { type: ["card", "cod"], required: true },
     discount: { type: Number, default: 0 },
     quantity: { type: Number, required: true },
     price: { type: Number, required: true },
@@ -80,57 +77,3 @@ const Product = mongoose.model("Product", productSchema);
 const Order = mongoose.model("Order", orderSchema);
 const Cart = mongoose.model("Cart", cartSchema);
 module.exports = { User, Product, Order, Cart };
-
-/**
- * Users{
-  _id ObjectId
-  name string
-  email string
-  image string
-  provider string
-  password string
-  role string
-  createdAt timestamp
-  updatedAt timestamp
-}
-Product{
-  _id ObjectId
-  title string
-  description string
-  category string
-  price number
-  image string
-  video string
-  discount number
-  discountTill timestamp
-  stock number
-  seller userId
-  createdAt timestamp
-  updatedAt timestamp
-}
-Order{
-  _id string
-  user userId
-  product productId
-  discount number
-  quantity number
-  price number
-  status string
-  createdAt timestamp
-  updatedAt timestamp
-}
-Cart{
-  _id ObjectId
-  user userId
-  product productId
-  createdAt timestamp
-  updatedAt timestamp
-}
-
-Users._id < Product.seller
-Users._id < Order.user
-Users._id < Cart.user
-Cart.product < Product._id
-Order.product < Product._id
-
- */
