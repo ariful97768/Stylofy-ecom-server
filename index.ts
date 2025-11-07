@@ -162,51 +162,39 @@ async function run() {
     }
   );
 
-  app.get(
-    "/get-homepage-products",
-
-    async (req: Request, res: Response) => {
-      try {
-        const products = await Product.find().limit(8);
-        res.json(products);
-      } catch (error) {
-        res.status(500).json({ message: "Server Error" });
-      }
+  app.get("/get-homepage-products", async (req: Request, res: Response) => {
+    try {
+      const products = await Product.find().limit(8);
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ message: "Server Error" });
     }
-  );
+  });
 
-  app.get(
-    "/get-all-products",
-    verifyToken,
-    async (req: Request, res: Response) => {
-      const paginationStart = parseInt(req.query.start as string) || 0;
-      const paginationLimit = parseInt(req.query.limit as string) || 18;
+  app.get("/get-all-products", async (req: Request, res: Response) => {
+    const paginationStart = parseInt(req.query.start as string) || 0;
+    const paginationLimit = parseInt(req.query.limit as string) || 18;
 
-      try {
-        const products = await Product.find()
-          .skip(paginationStart)
-          .limit(paginationLimit);
-        res.json(products);
-      } catch (error) {
-        res.status(500).json({ message: "Server Error" });
-      }
+    try {
+      const products = await Product.find()
+        .skip(paginationStart)
+        .limit(paginationLimit);
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ message: "Server Error" });
     }
-  );
+  });
 
-  app.get(
-    "/get-product/:id",
-    verifyToken,
-    async (req: Request, res: Response) => {
-      const id = req.params.id;
+  app.get("/get-product/:id", async (req: Request, res: Response) => {
+    const id = req.params.id;
 
-      try {
-        const product = await Product.findById(id);
-        res.json(product);
-      } catch (error) {
-        res.status(500).json({ message: "Server Error" });
-      }
+    try {
+      const product = await Product.findById(id);
+      res.json(product);
+    } catch (error) {
+      res.status(500).json({ message: "Server Error" });
     }
-  );
+  });
 
   app.post("/add-to-cart", verifyToken, async (req: Request, res: Response) => {
     try {
@@ -258,7 +246,7 @@ async function run() {
         if (!ress) {
           return res.status(404).json({ message: "Order not found" });
         }
-        res.json({ message: "Order deleted successfully" });
+        res.json({ message: "Order canceled successfully" });
       } catch (error) {
         res.status(500).json({ message: "Server Error" });
       }
