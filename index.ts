@@ -228,7 +228,8 @@ async function run() {
         const orders = await Order.find()
           .where("user")
           .equals(req.params.email)
-          .populate("product");
+          .populate("product")
+          .sort({ createdAt: -1 });
         res.json(orders);
       } catch (error) {
         res.status(500).json({ message: "Server Error" });
@@ -296,6 +297,20 @@ async function run() {
     }
   });
 
+  app.get(
+    "/get-all-orders-admin",
+    verifyAdmin,
+    async (req: Request, res: Response) => {
+      try {
+        const orders = await Order.find()
+          .populate("product")
+          .sort({ createdAt: -1 });
+        res.json(orders);
+      } catch (error) {
+        res.status(500).json({ error, message: "Server Error" });
+      }
+    }
+  );
   // app.get(
   //   "/get-cart-item/:id",
   //   verifyToken,
@@ -323,16 +338,6 @@ async function run() {
   //     res.status(401).json({ message: "Invalid token" });
   //   }
   // });
-
-  app.post("/users", async (req: Request, res: Response) => {
-    try {
-      const newUser = new User(req.body);
-      const savedUser = await newUser.save();
-      res.status(201).json(savedUser);
-    } catch (error) {
-      res.status(500).json({ message: "Server Error" });
-    }
-  });
 
   app.get("/products", async (req: Request, res: Response) => {
     try {

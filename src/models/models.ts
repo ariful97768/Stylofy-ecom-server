@@ -41,7 +41,7 @@ const orderSchema = new mongoose.Schema(
     discount: { type: Number, default: 0 },
     quantity: { type: Number, required: true },
     price: { type: Number, required: true },
-    shipping: { type: Number, required: true },
+    shippingFee: { type: Number, required: true },
     userInfo: {
       name: { type: String, required: true },
       email: { type: String, required: true },
@@ -53,7 +53,7 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "shipped", "delivered"],
+      enum: ["pending", "shipped", "delivered", "cancelled"],
       default: "pending",
     },
   },
