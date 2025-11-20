@@ -199,6 +199,16 @@ async function run() {
         return res.status(400).json({ message: "Invalid status" });
       }
       try {
+        if (status === "rejected") {
+          // update quantity
+          await Product.updateOne(
+            { _id: id },
+            {
+              $inc: { quantity: 1 },
+            }
+          );
+        }
+
         const updatedProduct = await Order.updateOne(
           { _id: id },
           {
@@ -239,6 +249,19 @@ async function run() {
     async (req: Request, res: Response) => {
       try {
         const newOrder = new Order(req.body);
+        const productId = req.body.product;
+        // check if quantity more then 1
+        const product = await Product.findById(productId);
+        if (product.quantity < 1) {
+          return res.status(400).json({ message: "Out of stock" });
+        }
+        // update product quantity
+        await Product.updateOne(
+          { _id: productId },
+          {
+            $inc: { quantity: -1 },
+          }
+        );
         const savedOrder = await newOrder.save();
         res.status(201).json(savedOrder);
       } catch (error) {
