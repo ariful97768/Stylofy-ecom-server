@@ -185,6 +185,33 @@ async function run() {
     }
   });
 
+  app.patch(
+    "/update-order-status/:id",
+    verifyAdmin,
+    async (req: Request, res: Response) => {
+      const id = req.params.id;
+      const status = req.body.status;
+      if (
+        status !== "accepted" &&
+        status !== "shipped" &&
+        status !== "rejected"
+      ) {
+        return res.status(400).json({ message: "Invalid status" });
+      }
+      try {
+        const updatedProduct = await Order.updateOne(
+          { _id: id },
+          {
+            status: status,
+          }
+        );
+        res.json(updatedProduct);
+      } catch (error) {
+        res.status(500).json({ error, message: "Server Error" });
+      }
+    }
+  );
+
   app.get("/get-product/:id", async (req: Request, res: Response) => {
     const id = req.params.id;
 
