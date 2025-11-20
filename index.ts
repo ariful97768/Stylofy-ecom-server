@@ -59,11 +59,11 @@ async function verifyAdmin(req: Request, res: Response, next: Function) {
     const decoded = jwt.verify(token, jwtSecret);
     const user = await User.findOne({ email: decoded.email });
 
-    if ((decoded.role === "admin", user.role === "admin")) {
+    if (decoded.role === "admin" && user.role === "admin") {
+      next();
     } else {
       res.status(403).json({ message: "Forbidden" });
     }
-    next();
   } catch (error) {
     res.status(401).json({ message: "Invalid token" });
   }

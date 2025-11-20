@@ -19,7 +19,7 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "test": "nodemon"
+    "dev": "nodemon"
   },
   "keywords": [],
   "author": "",
