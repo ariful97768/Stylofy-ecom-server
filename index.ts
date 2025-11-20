@@ -361,6 +361,23 @@ async function run() {
       }
     }
   );
+
+  app.delete(
+    "/delete-product/:id",
+    verifyAdmin,
+    async (req: Request, res: Response) => {
+      try {
+        const product = await Product.findByIdAndDelete(req.params.id);
+        if (!product) {
+          return res.status(404).json({ message: "Product not found" });
+        }
+        res.json({ product, message: "Product deleted successfully" });
+      } catch (error) {
+        res.status(500).json({ error, message: "Server Error" });
+      }
+    }
+  );
+
   // app.get(
   //   "/get-cart-item/:id",
   //   verifyToken,
